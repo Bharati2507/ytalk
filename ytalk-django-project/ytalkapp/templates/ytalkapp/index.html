@@ -1,0 +1,49 @@
+{% comment %} <!DOCTYPE html>
+<html>
+<body>
+
+<h2>Send a Link</h2>
+
+<form action="/home/post_link/" method="POST">
+    {% csrf_token %}
+    <label for="link">Link:</label><br>
+    <input type="text" id="link" name="link" value=""><br>
+    <input type="submit" value="Submit">
+</form> 
+
+</body>
+</html> {% endcomment %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Send Links</title>
+    <!-- CSS only -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h2 class="text-center">Send a Link</h2>
+                <form action="/home/post_link/" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="link">Link:</label>
+                        <input type="text" class="form-control" id="link" name="link" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="question">Question:</label>
+                        <input type="text" class="form-control" id="question" name="question" value="">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form> 
+            </div>
+        </div>
+    </div>
+
+    <!-- JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
