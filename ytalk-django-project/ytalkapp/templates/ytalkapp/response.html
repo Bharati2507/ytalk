@@ -2,26 +2,87 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Response</title>
+    <title>Home</title>
     <!-- CSS only -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .navbar {
+            background-color: #4a47a3;
+        }
+
+        .footer {
+            background-color: #4a47a3;
+            color: white;
+        }
+
+        h2 {
+            color: #4a47a3;
+        }
+
+        .btn-primary {
+            background-color: #4a47a3;
+            border: none;
+        }
+    </style>
 </head>
 <body>
+    <!-- Header -->
+    <nav class="navbar navbar-dark">
+        <a class="navbar-brand" href="#">Y-talk</a>
+    </nav>
+
     <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-md-6">
-                <h2 class="text-center">Summary and Links</h2>
-                <p class="lead">{{ summary }}</p>
-                <ul>
-                    {% for link in links %}
-                      <li><a href="{{ link }}">{{ link }}</a></li>
-                    {% endfor %}
-                </ul>
-                {% comment %} <a href="{{ link1 }}" class="btn btn-primary btn-block" role="button">Link 1</a>
-                <a href="{{ link2 }}" class="btn btn-primary btn-block" role="button">Link 2</a> {% endcomment %}
+            <div class="col-md-8">
+                <!-- Form -->
+                <h2 class="text-center mb-3">Enter Video Link and Question</h2>
+                <form action="/home/post_link/" method="POST" class="mb-3">
+                    {% csrf_token %}
+                    <!-- Add your form fields here -->
+                    <div class="form-group">
+                        <label for="link">Link:</label>
+                        <input type="text" class="form-control" id="link" name="link" placeholder="Enter Video Link">
+                    </div>
+                    <div class="form-group">
+                        <label for="question">Question:</label>
+                        <input type="text" class="form-control" id="question" name="question" placeholder="Enter Question">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                </form>
+
+                <!-- Display the results if they exist -->
+                {% if summary and links %}
+                    <h2 class="text-center mb-3">Answer</h2>
+                    <p class="lead">{{ answer }}</p>
+                    <h2 class="text-center mb-3">Summary and Links</h2>
+                    <p class="lead">{{ summary }}</p>
+                    <div class="row">
+                        {% for link in links %}
+                            <div class="col-12 mb-4">
+                                <div class="embed-responsive embed-responsive-16by9">
+                                    <iframe class="embed-responsive-item" src="{{ link }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
             </div>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3">
+        <div class="container text-center">
+            <span>© 2023 Y-talk</span>
+        </div>
+    </footer>
 
     <!-- JS, Popper.js, and jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

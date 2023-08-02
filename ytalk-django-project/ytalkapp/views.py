@@ -17,7 +17,7 @@ from typing import Iterator, TextIO
 from datetime import datetime
 import pandas as pd
 
-
+from urllib.parse import urlparse, parse_qs
 import re
 import openai
 from langchain import OpenAI, PromptTemplate, LLMChain
@@ -35,14 +35,14 @@ from langchain.chains import RetrievalQAWithSourcesChain
 import faiss
 
 if not os.environ.get('OPENAI_API_KEY'):
-    os.environ['OPENAI_API_KEY'] = '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'
+    os.environ['OPENAI_API_KEY'] = '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'
  
 
 
 llm = OpenAI(temperature=0)
 
 def home(request):
-    return render(request, 'ytalkapp/index.html')
+    return render(request, 'ytalkapp/response.html')
 
 def get_video(_link, _path):
   try:
@@ -191,11 +191,11 @@ def answer_question(_texts, _start_times, _question):
 
 # create a link that directs the user to the provided timecode
 def add_timecode_to_url(url, timecode):
-    # convert timecode to seconds
     time_parts = timecode.split(':')
     seconds = int(time_parts[0]) * 3600 + int(time_parts[1]) * 60 + int(time_parts[2])
+    # seconds = int(time_parts[0]) * 3600 + int(time_parts[1]) * 60 + int(time_parts[2])
     # append the timecode to the URL
-    return url + "&t=" + str(seconds) + "s"
+    return url + "?start=" + str(seconds) #+ "s"
 
 def get_output_df(questions, texts, start_times):
     data = []
@@ -262,7 +262,6 @@ def post_link(request):
           with open(vtt_path, 'w', encoding="utf-8") as vtt:
             write_vtt(output["segments"], file=vtt)
             #os.path.join(".", f"{slugify(title)}.vtt")
-          
             # print saved message with absolute path
           print("Saved VTT to", os.path.abspath(vtt_path))
           summary = gp3_summarize_new(extracted_text, 1600)
@@ -278,12 +277,21 @@ def post_link(request):
           timecodes = r[1].split(",")
           print(r[1])
           all_links=list()
-          
+          print(f"timecodes: {timecodes}")
+          # if  'None' in timecodes:
+          #   message = "Please ask better question "
+          #   return render(request, 'ytalkapp/response.html', message)
           for t in timecodes:
-            all_links.append(add_timecode_to_url(link, t))
+            parsed_url = urlparse(link)
+            print(f"parsed_url: {parsed_url}")
+            video_id = parse_qs(parsed_url.query)['v'][0]
+            embed_url = f'https://www.youtube.com/embed/{video_id}'
+            all_links.append(add_timecode_to_url(embed_url, t))
+            #"https://www.youtube.com/embed/"
+            # all_links.append(add_timecode_to_url(link, t))
             # print(add_timecode_to_url(link, t))
- 
-          context = {'summary': summary, 'links' : all_links}
+          print(f"all_links: {all_links}")
+          context = {'summary': summary, 'answer': r[0], 'links' : all_links}
           return render(request, 'ytalkapp/response.html', context) 
     
         else:
